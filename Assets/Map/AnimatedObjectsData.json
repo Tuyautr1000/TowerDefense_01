@@ -1,0 +1,38 @@
+[
+  {
+	"Position": {
+	  "X": 714,
+	  "Y": 825
+	},
+	"AnimationType": "res://Main.tscn::SpriteFrames_hg5s6",
+	"AnimationName": "left",
+	"ParentFolder": "Flags"
+  },
+  {
+	"Position": {
+	  "X": 879,
+	  "Y": 929
+	},
+	"AnimationType": "res://Main.tscn::SpriteFrames_hg5s6",
+	"AnimationName": "front",
+	"ParentFolder": "Flags"
+  },
+  {
+	"Position": {
+	  "X": 701,
+	  "Y": 922
+	},
+	"AnimationType": "res://Main.tscn::SpriteFrames_hg5s6",
+	"AnimationName": "left",
+	"ParentFolder": "Flags"
+  },
+  {
+	"Position": {
+	  "X": 798,
+	  "Y": 870
+	},
+	"AnimationType": "res://Main.tscn::SpriteFrames_n7qt4",
+	"AnimationName": "default",
+	"ParentFolder": "Campfire"
+  }
+]
