@@ -337,6 +337,6 @@ shape = SubResource("CircleShape2D_l44b0")
 
 [node name="Soldier" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-position = Vector2(0, 9)
+position = Vector2(1, 9)
 sprite_frames = SubResource("SpriteFrames_gr23p")
 animation = &"SideAttack"

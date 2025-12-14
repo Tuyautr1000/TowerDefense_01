@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 public partial class WaveManager : Node2D
 {
 	[Export] public PackedScene EnemyScene {get; set;}
+	[Export] public PackedScene BossScene {get; set;}
 	[Export] public Path2D EnemyPath {get; set;}
 	
 	private List<PathFollow2D> _activeEnemies = new List<PathFollow2D>();
@@ -40,11 +41,32 @@ public partial class WaveManager : Node2D
 			return;
 		}
 		
-		for (int i = 0; i < enemyCount; i++)
+		// Vague Boss : toutes les 5 vagues
+		if (_waveNumber % 5 == 0)
 		{
-			SpwanEnemy();
-			_idGenerator += 1;
-			await Task.Delay((int)(spwanInterval * 1000));
+			GD.Print($"🔥 VAGUE BOSS {_waveNumber} 🔥");
+			
+			// Spawner le boss en premier
+			SpawnBoss();
+			await Task.Delay((int)(spwanInterval * 1500)); // Délai avant les ennemis normaux
+			
+			// Puis spawner des ennemis normaux en plus du boss
+			for (int i = 0; i < enemyCount; i++)
+			{
+				SpwanEnemy();
+				_idGenerator += 1;
+				await Task.Delay((int)(spwanInterval * 1000));
+			}
+		}
+		else
+		{
+			// Vague normale : spawn des ennemis normaux
+			for (int i = 0; i < enemyCount; i++)
+			{
+				SpwanEnemy();
+				_idGenerator += 1;
+				await Task.Delay((int)(spwanInterval * 1000));
+			}
 		}
 	}
 	
@@ -131,6 +153,98 @@ public partial class WaveManager : Node2D
 		pathFollow.AddChild(enemyInstance);
 		EnemyPath.AddChild(pathFollow);
 		_activeEnemies.Add(pathFollow);
+	}
+	
+	private void SpawnBoss()
+	{
+		if (BossScene == null || EnemyPath == null)
+		{
+			GD.PrintErr("BossScene ou EnemyPath n'est pas défini!");
+			return;
+		}
+		
+		PathFollow2D pathFollow = new PathFollow2D();
+		pathFollow.Progress = 0;
+		pathFollow.Loop = false;
+		
+		// Instancier la scène Boss
+		Node2D newBoss = (Node2D)BossScene.Instantiate();
+		Boss bossInstance = newBoss as Boss;
+		
+		if (bossInstance == null)
+		{
+			GD.PrintErr("Le BossScene n'est pas une instance de Boss!");
+			newBoss.QueueFree();
+			return;
+		}
+		
+		_enemies.Add(bossInstance);
+		_idGenerator += 1;
+		
+		// Déterminer quel type de boss spawn en fonction de la vague
+		// Vague 5 = Boss 1, Vague 10 = Boss 2, Vague 15+ = Boss 3
+		int bossVariant = (_waveNumber / 5) % 3;
+		if (bossVariant == 0 && _waveNumber >= 15) bossVariant = 3;
+		
+		// Multiplicateur de difficulté basé sur la vague
+		float waveMultiplier = 1.0f + (_waveNumber - 1) * 0.15f;
+		
+		string bossType = "";
+		int bossHP = 0;
+		int bossDmg = 0;
+		float bossSpeed = 0f;
+		int bossReward = 0;
+		float scaleMultiplier = 1.5f;
+		Color bossColor = new Color(1.0f, 0.3f, 0.3f);
+		
+		// Configuration des 3 variantes de boss
+		switch (bossVariant)
+		{
+			case 1: // Boss Tank (lent, beaucoup de PV)
+				bossType = "Orc"; // Utiliser l'apparence Orc pour le boss tank
+				bossHP = (int)(1500 * waveMultiplier);
+				bossDmg = (int)(250 * waveMultiplier);
+				bossSpeed = 40.0f;
+				bossReward = 150;
+				scaleMultiplier = 2.0f;
+				bossColor = new Color(0.8f, 0.1f, 0.1f); // Rouge foncé
+				break;
+				
+			case 2: // Boss Rapide (rapide, PV moyens)
+				bossType = "Bee"; // Utiliser l'apparence Bee pour le boss rapide
+				bossHP = (int)(800 * waveMultiplier);
+				bossDmg = (int)(180 * waveMultiplier);
+				bossSpeed = 120.0f;
+				bossReward = 120;
+				scaleMultiplier = 1.3f;
+				bossColor = new Color(1.0f, 0.5f, 0.0f); // Orange
+				break;
+				
+			default: // Boss Équilibré
+				bossType = "Wolf"; // Utiliser l'apparence Wolf pour le boss équilibré
+				bossHP = (int)(1000 * waveMultiplier);
+				bossDmg = (int)(200 * waveMultiplier);
+				bossSpeed = 70.0f;
+				bossReward = 100;
+				scaleMultiplier = 1.5f;
+				bossColor = new Color(0.6f, 0.0f, 0.8f); // Violet
+				break;
+		}
+		
+		// Initialiser le boss avec ses stats
+		bossInstance.Initialize(bossType, bossHP, bossDmg, bossSpeed, pathFollow, bossReward, _idGenerator);
+		bossInstance.BossType = bossType;
+		bossInstance.ScaleMultiplier = scaleMultiplier;
+		bossInstance.BossColor = bossColor;
+		
+		// Connecter le signal de mort
+		bossInstance.Connect("EnemyDied", new Callable(this, nameof(OnEnemyDied)));
+		
+		pathFollow.AddChild(bossInstance);
+		EnemyPath.AddChild(pathFollow);
+		_activeEnemies.Add(pathFollow);
+		
+		GD.Print($"🔥 Boss spawné : {bossType} - HP: {bossHP}, DMG: {bossDmg}, Speed: {bossSpeed} 🔥");
 	}
 	
 	public void OnEnemyDied(Enemy enemy) {

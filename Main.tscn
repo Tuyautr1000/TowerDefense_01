@@ -1,4 +1,4 @@
-[gd_scene load_steps=90 format=3 uid="uid://dtyr7p37pn1kp"]
+[gd_scene load_steps=91 format=3 uid="uid://dtyr7p37pn1kp"]
 
 [ext_resource type="Texture2D" uid="uid://bir76mfwi2fqf" path="res://Assets/Field/Tiles/FieldsTileset.png" id="1_fbrca"]
 [ext_resource type="Texture2D" uid="uid://b3ms15eksbgol" path="res://Assets/Field/Objects/8 Camp/camp.png" id="2_sa1l4"]
@@ -28,6 +28,7 @@
 [ext_resource type="PackedScene" uid="uid://ddu60ix1sk1pi" path="res://tower.tscn" id="17_7wuox"]
 [ext_resource type="Script" path="res://UiManager.cs" id="18_7o5lt"]
 [ext_resource type="PackedScene" uid="uid://c2k40aabxb65d" path="res://Goldmanager.tscn" id="20_kdnb2"]
+[ext_resource type="PackedScene" uid="uid://t3q2w1n2pxnb" path="res://Boss.tscn" id="26_p0vwy"]
 [ext_resource type="Texture2D" uid="uid://cw01oxdirkq88" path="res://Assets/Towers/bowman tower/2 Idle/1.png" id="28_of6qg"]
 [ext_resource type="PackedScene" uid="uid://cq6qix2sk1pj" path="res://catapult.tscn" id="28_xf45t"]
 [ext_resource type="Texture2D" uid="uid://c10pt6d55cd25" path="res://Assets/Towers/catapult tower/2 Idle/1.png" id="29_dkdpx"]
@@ -723,6 +724,7 @@ shape = SubResource("RectangleShape2D_wyrqn")
 [node name="WaveManager" type="Node2D" parent="." node_paths=PackedStringArray("EnemyPath")]
 script = ExtResource("15_ygjcf")
 EnemyScene = ExtResource("16_7xpd8")
+BossScene = ExtResource("26_p0vwy")
 EnemyPath = NodePath("../Path2D")
 
 [node name="Towers" type="Node2D" parent="."]

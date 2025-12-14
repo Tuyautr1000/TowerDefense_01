@@ -5,7 +5,7 @@ public partial class Enemy : Node2D
 {
 	private AnimatedSprite2D animatedSprite;
 	private PathFollow2D pathFollow;
-	private Goldmanager gold;
+	protected Goldmanager gold;
 	private float pathSpeed;
 	public int ID;
 	private int reward;

@@ -7,7 +7,7 @@ public partial class Goldmanager : Node2D
 	private Label label;
 	
 	public override void _Ready() {
-		coin = 130; // Augmenté pour faciliter le début de partie
+		coin = 1000; // Or de départ augmenté
 		label = GetNodeOrNull<Label>("Label");
 		GetNodeOrNull<AnimatedSprite2D>("Gold").Play("Idle");
 	}
